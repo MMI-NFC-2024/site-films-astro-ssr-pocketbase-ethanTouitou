@@ -6,6 +6,7 @@ import type PocketBase from 'pocketbase'
 import type { RecordService } from 'pocketbase'
 
 export enum Collections {
+	Films = "Films",
 	Personne = "Personne",
 	Authorigins = "_authOrigins",
 	Externalauths = "_externalAuths",
@@ -43,6 +44,27 @@ export type AuthSystemFields<T = unknown> = {
 } & BaseSystemFields<T>
 
 // Record types for each collection
+
+export enum FilmsGenresOptions {
+	"action" = "action",
+	"drame" = "drame",
+	"surprise" = "surprise",
+	"suspense" = "suspense",
+	"horreur" = "horreur",
+}
+export type FilmsRecord = {
+	created: IsoAutoDateString
+	dete_de_sortie?: IsoDateString
+	dure_min?: number
+	genres?: FilmsGenresOptions[]
+	id: string
+	producteur?: RecordIdString
+	realisateur?: RecordIdString[]
+	scenariste?: RecordIdString[]
+	synopsis?: string
+	titre?: string
+	updated: IsoAutoDateString
+}
 
 export enum PersonneProffessionOptions {
 	"acteur" = "acteur",
@@ -126,6 +148,7 @@ export type UsersRecord = {
 }
 
 // Response types include system fields and match responses from the PocketBase API
+export type FilmsResponse<Texpand = unknown> = Required<FilmsRecord> & BaseSystemFields<Texpand>
 export type PersonneResponse<Texpand = unknown> = Required<PersonneRecord> & BaseSystemFields<Texpand>
 export type AuthoriginsResponse<Texpand = unknown> = Required<AuthoriginsRecord> & BaseSystemFields<Texpand>
 export type ExternalauthsResponse<Texpand = unknown> = Required<ExternalauthsRecord> & BaseSystemFields<Texpand>
@@ -137,6 +160,7 @@ export type UsersResponse<Texpand = unknown> = Required<UsersRecord> & AuthSyste
 // Types containing all Records and Responses, useful for creating typing helper functions
 
 export type CollectionRecords = {
+	Films: FilmsRecord
 	Personne: PersonneRecord
 	_authOrigins: AuthoriginsRecord
 	_externalAuths: ExternalauthsRecord
@@ -147,6 +171,7 @@ export type CollectionRecords = {
 }
 
 export type CollectionResponses = {
+	Films: FilmsResponse
 	Personne: PersonneResponse
 	_authOrigins: AuthoriginsResponse
 	_externalAuths: ExternalauthsResponse

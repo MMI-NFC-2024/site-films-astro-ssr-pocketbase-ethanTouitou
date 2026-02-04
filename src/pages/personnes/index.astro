@@ -1,17 +1,36 @@
 ---
 import Layout from "../../layouts/Layout.astro";
 const personnes = await Astro.locals.pb.collection("Personne").getFullList();
+import slug from "slug";
+const isLoggedIn = Astro.locals.pb.authStore.isValid;
 ---
 
 <Layout>
     <h1>Personnes</h1>
+    {isLoggedIn && (
+        <p>
+            <a href="/personnes/edit/new-nouvelle">Ajouter une personne</a>
+        </p>
+    )}
     <ul>
         {
             personnes.map((personne) => (
                 <li>
-                    <a href= {`/personnes/${personne.id}`}>{personne.nom}</a>
+                    <a href={`/personnes/${personne.id}-${slug(personne.nom)}`}>
+                        {personne.nom}
+                    </a>
+                    {isLoggedIn && (
+                        <>
+                            {" "}
+                            <a
+                                href={`/personnes/edit/${personne.id}-${slug(personne.nom)}`}
+                            >
+                                Editer
+                            </a>
+                        </>
+                    )}
                 </li>
             ))
         }
-    </ul></Layout
->
+    </ul>
+</Layout>
