@@ -6,3 +6,9 @@ declare global {
         }
     }
 }
+interface ImportMetaEnv {
+    PB_URL: string;
+}
+interface ImportMeta {
+    readonly env: ImportMetaEnv;
+}
