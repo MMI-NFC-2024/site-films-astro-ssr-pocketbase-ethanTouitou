@@ -1,0 +1,30 @@
+---
+import { Debug } from "astro:components";
+import slug from "slug";
+
+export const prerender = false;
+const { idFilm, idRole } = Astro.params;
+const film = await Astro.locals.pb.collection("Films").getOne(idFilm);
+const personnes = await Astro.locals.pb.collection("Personne").getFullList({
+    fields: "id,nom,prenom",
+});
+if (Astro.request.method === "POST") {
+    try {
+        await Astro.locals.pb.collection("Role").delete(idRole);
+    } catch (error) {
+        console.error("Erreur suppression du role:", error);
+    }
+   
+        return Astro.redirect(`/films/${idFilm}-${slug(film.titre)}`);
+}
+---
+
+
+<form method="POST">
+    <label
+        >Nom du role: {}
+    </label>
+    
+
+        <button type="submit">Confirmer la suppression</button>
+</form>

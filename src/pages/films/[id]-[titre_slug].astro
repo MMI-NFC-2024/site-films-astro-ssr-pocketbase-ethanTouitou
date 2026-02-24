@@ -6,7 +6,7 @@ import type {
   PersonneResponse,
   RoleResponse,
 } from "../../pocketbase-types";
-
+import LinkPersonne from "../../components/LinkPersonne.astro";
 export const prerender = false;
 
 const { id, titre_slug } = Astro.params;
@@ -94,7 +94,8 @@ const releaseDate = film.dete_de_sortie
       <ul>
         {film.expand.Role_via_film.map((role) => (
           <li>
-            {role.nom} - {role.expand.acteur.nom} {role.expand.acteur.prenom}
+            {role.nom} - <LinkPersonne personne={role.expand?.acteur} />
+            {isLoggedIn && <a href={`/films/supprimer-role/${id}-${role.id}`}>Supprimer</a>}
           </li>
         ))}
       </ul>
