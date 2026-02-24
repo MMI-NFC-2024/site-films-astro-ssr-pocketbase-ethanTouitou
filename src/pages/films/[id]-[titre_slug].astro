@@ -50,6 +50,7 @@ const releaseDate = film.dete_de_sortie
       <p>{film.genres?.join(", ") || "Genres non definis"}</p>
     </div>
     {isLoggedIn && <a href={`/films/edit/${id}-${titre_slug}`}>Editer</a>}
+    {isLoggedIn && <a href={`/films/supprimer-film/${id}`}>Supprimer</a>}
   </div>
 
   <div>

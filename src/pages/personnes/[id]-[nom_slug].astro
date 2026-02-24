@@ -6,14 +6,17 @@ import LinkListeFilms from "../../components/LinkListeFilms.astro";
 export const prerender = false;
 
 const { id, nom_slug } = Astro.params;
-const personne = await Astro.locals.pb.collection<PersonneResponse<{
-  Films_via_producteur: FilmsResponse[];
-  Films_via_realisateur: FilmsResponse[];
-  Films_via_scenariste: FilmsResponse[];
-}>>("Personne").getOne(id, {
-  expand:
-    "Films_via_producteur,Films_via_realisateur,Films_via_scenariste",
-});
+const personne = await Astro.locals.pb
+  .collection<
+    PersonneResponse<{
+      Films_via_producteur: FilmsResponse[];
+      Films_via_realisateur: FilmsResponse[];
+      Films_via_scenariste: FilmsResponse[];
+    }>
+  >("Personne")
+  .getOne(id, {
+    expand: "Films_via_producteur,Films_via_realisateur,Films_via_scenariste",
+  });
 const isLoggedIn = Astro.locals.pb.authStore.isValid;
 
 const displayName = personne.prenom
@@ -76,12 +79,13 @@ if (personne.date_de_naissance) {
     <div>
       <p>Film comme realisateur</p>
       <LinkListeFilms films={personne.expand?.Films_via_realisateur || []} />
-  </div>
+    </div>
     <div>
       <p>Film comme scenariste</p>
       <LinkListeFilms films={personne.expand?.Films_via_scenariste || []} />
     </div>
 
-  <a href="/personnes"> Retour a la liste des personnes </a>
-
+    <a href="/personnes"> Retour a la liste des personnes </a>
+    {isLoggedIn && <a href={`/personnes/supprimer-personne/${id}`}>Supprimer</a>}
+  </div>
 </Layout>

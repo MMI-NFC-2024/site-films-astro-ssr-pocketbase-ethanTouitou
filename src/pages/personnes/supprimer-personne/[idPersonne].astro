@@ -1,0 +1,27 @@
+---
+import { Debug } from "astro:components";
+import slug from "slug";
+
+export const prerender = false;
+const { idPersonne } = Astro.params;
+const personne = await Astro.locals.pb.collection("Personne").getOne(idPersonne);
+if (Astro.request.method === "POST") {
+    try {
+        await Astro.locals.pb.collection("Personne").delete(idPersonne);
+    } catch (error) {
+        console.error("Erreur suppression de la personne:", error);
+    }
+   
+        return Astro.redirect(`/personnes/`);
+}
+---
+
+
+<form method="POST">
+    <label
+        >Nom de la personne: {personne.nom} {personne.prenom}
+    </label>
+    
+
+        <button type="submit">Confirmer la suppression</button>
+</form>
