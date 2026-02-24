@@ -5,10 +5,8 @@ declare global {
             pb: TypedPocketBase;
         }
     }
+    interface ImportMetaEnv {
+        PB_URL: string;
+    }
 }
-interface ImportMetaEnv {
-    PB_URL: string;
-}
-interface ImportMeta {
-    readonly env: ImportMetaEnv;
-}
+
