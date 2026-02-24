@@ -1,31 +1,36 @@
 ---
+import { Debug } from "astro:components";
 import slug from "slug";
 
 export const prerender = false;
 const { idFilm } = Astro.params;
+const film = await Astro.locals.pb.collection("Films").getOne(idFilm);
 const personnes = await Astro.locals.pb.collection("Personne").getFullList({
     fields: "id,nom,prenom",
 });
 if (Astro.request.method === "POST") {
     const data = await Astro.request.formData();
-    const role = await Astro.locals.pb.collection("Role").create(data);
-    const film = await Astro.locals.pb.collection("Films").update(idFilm!, {
-        "+role": role.id,
-    });
-    if (role) {
+    let role;
+    try {
+        role = await Astro.locals.pb.collection("Role").create(data);
+    } catch (error) {
+        console.error("Erreur création du role:", error);
+       
+    }
+    if (role ) {
         return Astro.redirect(`/films/${idFilm}-${slug(film.titre)}`);
     }
 }
 ---
-
+<Debug {idFilm} />
 <form method="POST">
     <label
         >Nom du role
-        <input type="text" name="nom_role" required />
+        <input type="text" name="nom" required />
     </label>
     <label>
         Personne
-        <select name="personne">
+        <select name="acteur">
             <option value="">Aucun</option>
             {
                 personnes.map((personne) => (
@@ -37,5 +42,10 @@ if (Astro.request.method === "POST") {
         </select>
         <button type="submit">Ajouter</button>
     </label>
-    <input type="hidden" name="user" value={Astro.locals.pb.authStore.record?.id} />
+    <input
+        type="hidden"
+        name="user"
+        value={Astro.locals.pb.authStore.record?.id}
+    />
+    <input type="hidden" name="film" value={idFilm} />
 </form>

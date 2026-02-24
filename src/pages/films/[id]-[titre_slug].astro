@@ -1,19 +1,29 @@
 ﻿---
+import { Debug } from "astro:components";
 import Layout from "../../layouts/Layout.astro";
-import type { FilmsResponse, PersonneResponse } from "../../pocketbase-types";
+import type {
+  FilmsResponse,
+  PersonneResponse,
+  RoleResponse,
+} from "../../pocketbase-types";
 
 export const prerender = false;
 
 const { id, titre_slug } = Astro.params;
 const isLoggedIn = Astro.locals.pb.authStore.isValid;
 
-const film = await Astro.locals.pb.collection<FilmsResponse<{
-  producteur: PersonneResponse;
-  realisateur: PersonneResponse[];
-  scenariste: PersonneResponse[];
-}>>("Films").getOne(id, {
-  expand: "producteur,realisateur,scenariste",
-});
+const film = await Astro.locals.pb
+  .collection<
+    FilmsResponse<{
+      producteur: PersonneResponse;
+      realisateur: PersonneResponse[];
+      scenariste: PersonneResponse[];
+      Role_via_film: RoleResponse<{ acteur: PersonneResponse }>[];
+    }>
+  >("Films")
+  .getOne(id, {
+    expand: "producteur,realisateur,scenariste,Role_via_film.acteur",
+  });
 
 const nameFor = (personne) => {
   if (!personne) return "";
@@ -32,17 +42,14 @@ const releaseDate = film.dete_de_sortie
   : "Non specifie";
 ---
 
+
 <Layout pageTitle={pageTitle}>
   <div>
     <div>
       <h1>{film.titre || "Film"}</h1>
       <p>{film.genres?.join(", ") || "Genres non definis"}</p>
     </div>
-    {isLoggedIn && (
-      <a href={`/films/edit/${id}-${titre_slug}`}>
-        Editer
-      </a>
-    )}
+    {isLoggedIn && <a href={`/films/edit/${id}-${titre_slug}`}>Editer</a>}
   </div>
 
   <div>
@@ -57,7 +64,11 @@ const releaseDate = film.dete_de_sortie
     <div>
       <p>Producteur</p>
       <p>
-        {film.expand?.producteur ? nameFor(film.expand.producteur) : "Non specifie"}
+        {
+          film.expand?.producteur
+            ? nameFor(film.expand.producteur)
+            : "Non specifie"
+        }
       </p>
     </div>
     <div>
@@ -75,10 +86,20 @@ const releaseDate = film.dete_de_sortie
     <p>{film.synopsis || "Non specifie"}</p>
   </div>
 
-  <a href="/films">
-    Retour a la liste des films 
-  </a>
-  <a href={`/films/ajout-role/${id}`}>
-    Ajouter un role</a>"
-</Layout>
+  
+  <p>{isLoggedIn && <a href={`/films/ajout-role/${id}`}>Ajouter un role</a>}</p>
+  
+  {film.expand?.Role_via_film && <div>
+    <p>Roles:</p>
+      <ul>
+        {film.expand.Role_via_film.map((role) => (
+          <li>
+            {role.nom} - {role.expand.acteur.nom} {role.expand.acteur.prenom}
+          </li>
+        ))}
+      </ul>
+  </div>
+  }
 
+  <p><a href="/films"> Retour a la liste des films </a></p>
+</Layout>
