@@ -238,7 +238,8 @@ if (isLoggedIn) {
 
         <div>
           <h2>Ajouter</h2>
-          <form method="post">
+          <form method="post" enctype="multipart/form-data">
+            <input type="file" name="poster" />
             <input type="hidden" name="intent" value="create" />
 
             <label>
@@ -321,5 +322,4 @@ if (isLoggedIn) {
       </div>
     )
   }
- 
 </Layout>
