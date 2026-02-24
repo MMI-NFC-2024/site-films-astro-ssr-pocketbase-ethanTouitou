@@ -1,36 +1,45 @@
----
+﻿---
 import Layout from "../../layouts/Layout.astro";
-const personnes = await Astro.locals.pb.collection("Personne").getFullList();
 import slug from "slug";
+
+const personnes = await Astro.locals.pb.collection("Personne").getFullList();
 const isLoggedIn = Astro.locals.pb.authStore.isValid;
 ---
 
-<Layout>
+<Layout pageTitle="Personnes - PocketBase Cinema">
+  <div>
     <h1>Personnes</h1>
     {isLoggedIn && (
-        <p>
-            <a href="/personnes/edit/new-nouvelle">Ajouter une personne</a>
-        </p>
+      <a href="/personnes/edit/new-nouvelle">
+        Ajouter une personne
+      </a>
     )}
-    <ul>
-        {
-            personnes.map((personne) => (
-                <li>
-                    <a href={`/personnes/${personne.id}-${slug(personne.nom)}`}>
-                        {personne.nom}
-                    </a>
-                    {isLoggedIn && (
-                        <>
-                            {" "}
-                            <a
-                                href={`/personnes/edit/${personne.id}-${slug(personne.nom)}`}
-                            >
-                                Editer
-                            </a>
-                        </>
-                    )}
-                </li>
-            ))
-        }
-    </ul>
+  </div>
+
+  <ul>
+    {personnes.map((personne) => (
+      <li>
+        <div>
+          <a
+           
+            href={`/personnes/${personne.id}-${slug(personne.nom || "personne")}`}
+          >
+            {personne.prenom ? `${personne.prenom} ${personne.nom ?? ""}`.trim() : personne.nom || "Personne"}
+          </a>
+          <p>
+            {personne.proffession?.join(", ") || "Profession non specifiee"}
+          </p>
+        </div>
+        {isLoggedIn && (
+          <a
+           
+            href={`/personnes/edit/${personne.id}-${slug(personne.nom || "personne")}`}
+          >
+            Editer
+          </a>
+        )}
+      </li>
+    ))}
+  </ul>
 </Layout>
+

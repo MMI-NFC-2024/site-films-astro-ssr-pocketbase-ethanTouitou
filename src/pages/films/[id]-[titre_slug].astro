@@ -1,0 +1,84 @@
+﻿---
+import Layout from "../../layouts/Layout.astro";
+import type { FilmsResponse, PersonneResponse } from "../../pocketbase-types";
+
+export const prerender = false;
+
+const { id, titre_slug } = Astro.params;
+const isLoggedIn = Astro.locals.pb.authStore.isValid;
+
+const film = await Astro.locals.pb.collection<FilmsResponse<{
+  producteur: PersonneResponse;
+  realisateur: PersonneResponse[];
+  scenariste: PersonneResponse[];
+}>>("Films").getOne(id, {
+  expand: "producteur,realisateur,scenariste",
+});
+
+const nameFor = (personne) => {
+  if (!personne) return "";
+  const parts = [personne.prenom, personne.nom].filter(Boolean);
+  return parts.length ? parts.join(" ") : personne.id;
+};
+
+const listNames = (list) => {
+  if (!Array.isArray(list) || list.length === 0) return "Non specifie";
+  return list.map(nameFor).join(", ");
+};
+
+const pageTitle = film.titre ? `${film.titre} - Film` : "Film";
+const releaseDate = film.dete_de_sortie
+  ? new Date(film.dete_de_sortie).toLocaleDateString("fr-FR")
+  : "Non specifie";
+---
+
+<Layout pageTitle={pageTitle}>
+  <div>
+    <div>
+      <h1>{film.titre || "Film"}</h1>
+      <p>{film.genres?.join(", ") || "Genres non definis"}</p>
+    </div>
+    {isLoggedIn && (
+      <a href={`/films/edit/${id}-${titre_slug}`}>
+        Editer
+      </a>
+    )}
+  </div>
+
+  <div>
+    <div>
+      <p>Date de sortie</p>
+      <p>{releaseDate}</p>
+    </div>
+    <div>
+      <p>Duree (min)</p>
+      <p>{film.dure_min ?? "Non specifie"}</p>
+    </div>
+    <div>
+      <p>Producteur</p>
+      <p>
+        {film.expand?.producteur ? nameFor(film.expand.producteur) : "Non specifie"}
+      </p>
+    </div>
+    <div>
+      <p>Realisateur</p>
+      <p>{listNames(film.expand?.realisateur)}</p>
+    </div>
+    <div>
+      <p>Scenariste</p>
+      <p>{listNames(film.expand?.scenariste)}</p>
+    </div>
+  </div>
+
+  <div>
+    <p>Synopsis</p>
+    <p>{film.synopsis || "Non specifie"}</p>
+  </div>
+
+  <a href="/films">
+    Retour a la liste des films 
+  </a>
+  <a href={`/films/ajout-role/${id}`}>
+    Ajouter un role</a>"
+</Layout>
+

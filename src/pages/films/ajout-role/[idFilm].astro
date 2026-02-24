@@ -1,0 +1,41 @@
+---
+import slug from "slug";
+
+export const prerender = false;
+const { idFilm } = Astro.params;
+const personnes = await Astro.locals.pb.collection("Personne").getFullList({
+    fields: "id,nom,prenom",
+});
+if (Astro.request.method === "POST") {
+    const data = await Astro.request.formData();
+    const role = await Astro.locals.pb.collection("Role").create(data);
+    const film = await Astro.locals.pb.collection("Films").update(idFilm!, {
+        "+role": role.id,
+    });
+    if (role) {
+        return Astro.redirect(`/films/${idFilm}-${slug(film.titre)}`);
+    }
+}
+---
+
+<form method="POST">
+    <label
+        >Nom du role
+        <input type="text" name="nom_role" required />
+    </label>
+    <label>
+        Personne
+        <select name="personne">
+            <option value="">Aucun</option>
+            {
+                personnes.map((personne) => (
+                    <option value={personne.id}>
+                        {personne.prenom} {personne.nom}
+                    </option>
+                ))
+            }
+        </select>
+        <button type="submit">Ajouter</button>
+    </label>
+    <input type="hidden" name="user" value={Astro.locals.pb.authStore.record?.id} />
+</form>

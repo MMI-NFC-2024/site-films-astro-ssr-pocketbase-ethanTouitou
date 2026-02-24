@@ -8,6 +8,7 @@ import type { RecordService } from 'pocketbase'
 export enum Collections {
 	Films = "Films",
 	Personne = "Personne",
+	Role = "Role",
 	Authorigins = "_authOrigins",
 	Externalauths = "_externalAuths",
 	Mfas = "_mfas",
@@ -60,10 +61,12 @@ export type FilmsRecord = {
 	id: string
 	producteur?: RecordIdString
 	realisateur?: RecordIdString[]
+	role?: RecordIdString[]
 	scenariste?: RecordIdString[]
 	synopsis?: string
 	titre?: string
 	updated: IsoAutoDateString
+	user?: RecordIdString
 }
 
 export enum PersonneProffessionOptions {
@@ -83,6 +86,15 @@ export type PersonneRecord = {
 	proffession?: PersonneProffessionOptions[]
 	updated: IsoAutoDateString
 	user: RecordIdString
+}
+
+export type RoleRecord = {
+	acteur?: RecordIdString
+	created: IsoAutoDateString
+	id: string
+	nom?: string
+	updated: IsoAutoDateString
+	user?: RecordIdString
 }
 
 export type AuthoriginsRecord = {
@@ -150,6 +162,7 @@ export type UsersRecord = {
 // Response types include system fields and match responses from the PocketBase API
 export type FilmsResponse<Texpand = unknown> = Required<FilmsRecord> & BaseSystemFields<Texpand>
 export type PersonneResponse<Texpand = unknown> = Required<PersonneRecord> & BaseSystemFields<Texpand>
+export type RoleResponse<Texpand = unknown> = Required<RoleRecord> & BaseSystemFields<Texpand>
 export type AuthoriginsResponse<Texpand = unknown> = Required<AuthoriginsRecord> & BaseSystemFields<Texpand>
 export type ExternalauthsResponse<Texpand = unknown> = Required<ExternalauthsRecord> & BaseSystemFields<Texpand>
 export type MfasResponse<Texpand = unknown> = Required<MfasRecord> & BaseSystemFields<Texpand>
@@ -162,6 +175,7 @@ export type UsersResponse<Texpand = unknown> = Required<UsersRecord> & AuthSyste
 export type CollectionRecords = {
 	Films: FilmsRecord
 	Personne: PersonneRecord
+	Role: RoleRecord
 	_authOrigins: AuthoriginsRecord
 	_externalAuths: ExternalauthsRecord
 	_mfas: MfasRecord
@@ -173,6 +187,7 @@ export type CollectionRecords = {
 export type CollectionResponses = {
 	Films: FilmsResponse
 	Personne: PersonneResponse
+	Role: RoleResponse
 	_authOrigins: AuthoriginsResponse
 	_externalAuths: ExternalauthsResponse
 	_mfas: MfasResponse

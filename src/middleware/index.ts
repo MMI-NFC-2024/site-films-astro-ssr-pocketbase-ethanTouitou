@@ -1,6 +1,5 @@
 // src/middleware/index.ts
 import PocketBase from 'pocketbase';
-
 import { defineMiddleware } from 'astro/middleware';
 
 export const onRequest = defineMiddleware(async ({ locals, request, isPrerendered }, next: () => any) => {

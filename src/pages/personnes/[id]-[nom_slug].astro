@@ -1,51 +1,87 @@
 ﻿---
+import { Debug } from "astro:components";
 import Layout from "../../layouts/Layout.astro";
-const { id, nom_slug } = Astro.params;
-const personne = await Astro.locals.pb.collection("Personne").getOne(id);
+import type { FilmsResponse, PersonneResponse } from "../../pocketbase-types";
+import LinkListeFilms from "../../components/LinkListeFilms.astro";
 export const prerender = false;
+
+const { id, nom_slug } = Astro.params;
+const personne = await Astro.locals.pb.collection<PersonneResponse<{
+  Films_via_producteur: FilmsResponse[];
+  Films_via_realisateur: FilmsResponse[];
+  Films_via_scenariste: FilmsResponse[];
+}>>("Personne").getOne(id, {
+  expand:
+    "Films_via_producteur,Films_via_realisateur,Films_via_scenariste",
+});
 const isLoggedIn = Astro.locals.pb.authStore.isValid;
+
+const displayName = personne.prenom
+  ? `${personne.prenom} ${personne.nom ?? ""}`.trim()
+  : personne.nom || "Personne";
+
+const pageTitle = `${displayName} - Personne`;
+const birthDate = personne.date_de_naissance
+  ? new Date(personne.date_de_naissance).toLocaleDateString("fr-FR")
+  : "Non specifiee";
+const deathDate = personne.date_de_deces
+  ? new Date(personne.date_de_deces).toLocaleDateString("fr-FR")
+  : "Non specifiee";
+
+let age = null;
+if (personne.date_de_naissance) {
+  const birth = new Date(personne.date_de_naissance);
+  const endDate = personne.date_de_deces
+    ? new Date(personne.date_de_deces)
+    : new Date();
+  age = endDate.getFullYear() - birth.getFullYear();
+  const monthDiff = endDate.getMonth() - birth.getMonth();
+  if (
+    monthDiff < 0 ||
+    (monthDiff === 0 && endDate.getDate() < birth.getDate())
+  ) {
+    age--;
+  }
+}
 ---
 
-<Layout>
-    <h1>{personne.nom}</h1>
-    <p>
-        Date de naissance: {
-            new Date(personne.date_de_naissance).toLocaleDateString("fr-FR")
-        }
-    </p>
-    {
-        personne.date_de_deces && (
-            <p>
-                Date de décès:{" "}
-                {new Date(personne.date_de_deces).toLocaleDateString("fr-FR")}
-            </p>
-        )
-    }
-    <p>
-        Âge: {
-            (() => {
-                const birth = new Date(personne.date_de_naissance);
-                const endDate = personne.date_de_deces
-                    ? new Date(personne.date_de_deces)
-                    : new Date();
-                let age = endDate.getFullYear() - birth.getFullYear();
-                const monthDiff = endDate.getMonth() - birth.getMonth();
-                if (
-                    monthDiff < 0 ||
-                    (monthDiff === 0 && endDate.getDate() < birth.getDate())
-                ) {
-                    age--;
-                }
-                return age;
-            })()
-        } ans
-    </p>
-    <p>Profession: {personne.proffession?.join(", ") || "Non spécifiée"}</p>
-    {isLoggedIn && (
-        <p>
-            <a href={`/personnes/edit/${id}-${nom_slug}`}>Editer</a>
-        </p>
-    )}
-    <a href="/personnes">Retour à la liste des personnes</a>
-</Layout>
+<Layout pageTitle={pageTitle}>
+  <div>
+    <div>
+      <h1>{displayName}</h1>
+      <p>
+        {personne.proffession?.join(", ") || "Profession non specifiee"}
+      </p>
+    </div>
+    {isLoggedIn && <a href={`/personnes/edit/${id}-${nom_slug}`}>Editer</a>}
+  </div>
 
+  <div>
+    <div>
+      <p>Naissance</p>
+      <p>{birthDate}</p>
+    </div>
+    <div>
+      <p>Deces</p>
+      <p>{deathDate}</p>
+    </div>
+    <div>
+      <p>Age</p>
+      <p>{age ?? "Non specifie"}</p>
+    </div>
+    <div>
+      <p>Film comme producteur</p>
+      <LinkListeFilms films={personne.expand?.Films_via_producteur || []} />
+    </div>
+    <div>
+      <p>Film comme realisateur</p>
+      <LinkListeFilms films={personne.expand?.Films_via_realisateur || []} />
+  </div>
+    <div>
+      <p>Film comme scenariste</p>
+      <LinkListeFilms films={personne.expand?.Films_via_scenariste || []} />
+    </div>
+
+  <a href="/personnes"> Retour a la liste des personnes </a>
+
+</Layout>
