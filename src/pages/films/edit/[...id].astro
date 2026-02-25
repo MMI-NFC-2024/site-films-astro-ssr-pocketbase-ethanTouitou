@@ -1,5 +1,7 @@
 ﻿---
+import Multiselect from "@vueform/multiselect";
 import Layout from "../../../layouts/Layout.astro";
+import SelectPersonnes from "../../../components/SelectPersonnes.vue";
 
 export const prerender = false;
 
@@ -276,6 +278,7 @@ if (isLoggedIn) {
 
             <label>
               Producteur
+              <SelectPersonnes personnes={personnes} client:load />
               <select name="producteur">
                 <option value="">Aucun</option>
                 {personnes.map((personne) => (
