@@ -3,6 +3,7 @@ import Multiselect from '@vueform/multiselect';
 import type { PersonneResponse } from '../pocketbase-types';
 import { ref } from 'vue';
 const props = defineProps<{
+    name: string;
     personnes: PersonneResponse[];
 }>();
 const personneId = ref()
@@ -15,7 +16,8 @@ const personneId = ref()
                 label="nom"
                 value-prop="id"
               />
-
+valeur:{{ personneId }}
+<imput type="hidden" :value="personneId" :name="name"/>
 </template>
 
 <style src="@vueform/multiselect/themes/default.css"></style>

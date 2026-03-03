@@ -1,5 +1,5 @@
 ---
-import { Debug } from "astro:components";
+import Layout from "../../../layouts/Layout.astro";
 import slug from "slug";
 
 export const prerender = false;
@@ -15,37 +15,43 @@ if (Astro.request.method === "POST") {
         role = await Astro.locals.pb.collection("Role").create(data);
     } catch (error) {
         console.error("Erreur création du role:", error);
-       
     }
     if (role ) {
         return Astro.redirect(`/films/${idFilm}-${slug(film.titre)}`);
     }
 }
 ---
-<Debug {idFilm} />
-<form method="POST">
-    <label
-        >Nom du role
-        <input type="text" name="nom" required />
-    </label>
-    <label>
-        Personne
-        <select name="acteur">
-            <option value="">Aucun</option>
-            {
-                personnes.map((personne) => (
-                    <option value={personne.id}>
-                        {personne.prenom} {personne.nom}
-                    </option>
-                ))
-            }
-        </select>
+<Layout pageTitle="Ajout role - PocketBase Cinema">
+    <div>
+        <h1>Ajouter un role</h1>
+        <a href={`/films/${idFilm}-${slug(film.titre || "film")}`}>Retour au film</a>
+    </div>
+
+    <form method="POST">
+        <label>
+            Nom du role
+            <input type="text" name="nom" required />
+        </label>
+        <label>
+            Personne
+            <select name="acteur">
+                <option value="">Aucun</option>
+                {
+                    personnes.map((personne) => (
+                        <option value={personne.id}>
+                            {personne.prenom} {personne.nom}
+                        </option>
+                    ))
+                }
+            </select>
+        </label>
+
+        <input
+            type="hidden"
+            name="user"
+            value={Astro.locals.pb.authStore.record?.id}
+        />
+        <input type="hidden" name="film" value={idFilm} />
         <button type="submit">Ajouter</button>
-    </label>
-    <input
-        type="hidden"
-        name="user"
-        value={Astro.locals.pb.authStore.record?.id}
-    />
-    <input type="hidden" name="film" value={idFilm} />
-</form>
+    </form>
+</Layout>

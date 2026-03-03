@@ -1,6 +1,7 @@
 ﻿---
 const { pageTitle = "PocketBase Cinema" } = Astro.props;
 import "@vueform/multiselect/themes/default.css";
+import "../styles/global.css";
 ---
 
 <!doctype html>
@@ -10,14 +11,20 @@ import "@vueform/multiselect/themes/default.css";
     <meta name="viewport" content="width=device-width" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="icon" href="/favicon.ico" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&family=Space+Grotesk:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
     <meta name="generator" content={Astro.generator} />
     <title>{pageTitle}</title>
   </head>
   <body>
-    <header>
-      <div>
-        <a href="/">PocketBase Cinema</a>
-        <nav>
+    <header class="site-header">
+      <div class="shell header-row">
+        <a class="brand" href="/">PocketBase Cinema</a>
+        <nav class="main-nav">
           <a href="/">Accueil</a>
           <a href="/films">Films</a>
           <a href="/personnes">Personnes</a>
@@ -25,8 +32,292 @@ import "@vueform/multiselect/themes/default.css";
         </nav>
       </div>
     </header>
-    <main>
+    <main class="shell">
       <slot />
     </main>
   </body>
 </html>
+
+<style is:global>
+  :root {
+    --bg: #fdf8ef;
+    --bg-soft: #f4ebdc;
+    --surface: rgba(255, 255, 255, 0.84);
+    --surface-strong: #ffffff;
+    --text: #23211e;
+    --muted: #6f665c;
+    --line: #ddd2c3;
+    --accent: #d26431;
+    --accent-strong: #b5461e;
+    --ring: rgba(210, 100, 49, 0.22);
+    --radius: 16px;
+    --shadow: 0 18px 36px rgba(58, 34, 15, 0.08);
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  html,
+  body {
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    min-height: 100vh;
+    color: var(--text);
+    font-family: "Space Grotesk", "Avenir Next", "Segoe UI", sans-serif;
+    line-height: 1.45;
+    background:
+      radial-gradient(
+        circle at 10% 0%,
+        rgba(210, 100, 49, 0.18),
+        transparent 40%
+      ),
+      radial-gradient(
+        circle at 100% 100%,
+        rgba(255, 169, 79, 0.2),
+        transparent 34%
+      ),
+      var(--bg);
+  }
+
+  .shell {
+    width: min(1100px, calc(100% - 2.2rem));
+    margin-inline: auto;
+  }
+
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    backdrop-filter: blur(8px);
+    background: rgba(253, 248, 239, 0.88);
+    border-bottom: 1px solid rgba(173, 148, 121, 0.28);
+  }
+
+  .header-row {
+    padding: 0.95rem 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem 1.4rem;
+  }
+
+  .brand {
+    font-family: "Fraunces", Georgia, serif;
+    font-size: 1.2rem;
+    font-weight: 600;
+    text-decoration: none;
+    color: #1f1c18;
+    letter-spacing: 0.01em;
+  }
+
+  .main-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+  }
+
+  .main-nav a {
+    text-decoration: none;
+    color: var(--muted);
+    padding: 0.42rem 0.8rem;
+    border-radius: 999px;
+    border: 1px solid transparent;
+    transition: 140ms ease;
+  }
+
+  .main-nav a:hover {
+    color: var(--text);
+    background: var(--bg-soft);
+    border-color: var(--line);
+  }
+
+  main {
+    padding-block: 1.6rem 2.2rem;
+  }
+
+  main > * + * {
+    margin-top: 1rem;
+  }
+
+  h1,
+  h2,
+  h3 {
+    margin: 0;
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+  }
+
+  h1 {
+    font-family: "Fraunces", Georgia, serif;
+    font-size: clamp(1.9rem, 3vw, 2.6rem);
+  }
+
+  p {
+    margin: 0;
+    color: #3b372f;
+  }
+
+  a {
+    color: #8f3517;
+    font-weight: 500;
+    text-underline-offset: 2px;
+  }
+
+  a:hover {
+    color: #7a2f15;
+  }
+
+  ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: 0.85rem;
+  }
+
+  li {
+    border: 1px solid var(--line);
+    background: var(--surface);
+    box-shadow: var(--shadow);
+    border-radius: var(--radius);
+    padding: 0.95rem 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.8rem;
+    flex-wrap: wrap;
+  }
+
+  form,
+  main > div,
+  main > section {
+    border: 1px solid var(--line);
+    background: var(--surface);
+    box-shadow: var(--shadow);
+    border-radius: var(--radius);
+    padding: 1rem;
+  }
+
+  main > div > div:first-child {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.8rem;
+    flex-wrap: wrap;
+  }
+
+  main > div > a,
+  main > p > a,
+  main > div a[href*="/edit/"],
+  main > div a[href*="/supprimer/"],
+  main > div a[href*="/ajout-role/"],
+  button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    border: 1px solid transparent;
+    padding: 0.52rem 0.95rem;
+    background: var(--accent);
+    color: #fff;
+    text-decoration: none;
+    font-weight: 600;
+    transition: 140ms ease;
+    cursor: pointer;
+  }
+
+  main > div > a:hover,
+  main > p > a:hover,
+  main > div a[href*="/edit/"]:hover,
+  main > div a[href*="/supprimer/"]:hover,
+  main > div a[href*="/ajout-role/"]:hover,
+  button:hover {
+    background: var(--accent-strong);
+    color: #fff;
+  }
+
+  form {
+    display: grid;
+    gap: 0.85rem;
+  }
+
+  label {
+    display: grid;
+    gap: 0.34rem;
+    font-weight: 600;
+    color: #3c372f;
+  }
+
+  input,
+  select,
+  textarea {
+    width: 100%;
+    border: 1px solid #cfbda8;
+    border-radius: 11px;
+    background: var(--surface-strong);
+    padding: 0.56rem 0.72rem;
+    font: inherit;
+    color: var(--text);
+  }
+
+  textarea {
+    min-height: 120px;
+    resize: vertical;
+  }
+
+  input:focus,
+  select:focus,
+  textarea:focus,
+  button:focus {
+    outline: 3px solid var(--ring);
+    outline-offset: 1px;
+    border-color: #d89a62;
+  }
+
+  fieldset {
+    margin: 0;
+    border: 1px solid #d8c8b5;
+    border-radius: 12px;
+    padding: 0.75rem;
+    display: grid;
+    gap: 0.45rem;
+  }
+
+  legend {
+    padding: 0 0.35rem;
+    font-weight: 700;
+  }
+
+  fieldset > div {
+    display: grid;
+    gap: 0.5rem;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  }
+
+  fieldset label {
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+  }
+
+  fieldset input[type="checkbox"] {
+    width: auto;
+    margin: 0;
+  }
+
+  @media (max-width: 720px) {
+    .shell {
+      width: min(1100px, calc(100% - 1.2rem));
+    }
+
+    main {
+      padding-top: 1rem;
+    }
+  }
+</style>
