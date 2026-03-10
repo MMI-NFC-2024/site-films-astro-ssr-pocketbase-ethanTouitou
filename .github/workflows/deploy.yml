@@ -18,4 +18,4 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: 22010
           script: |
-            /var/www/tpnote/deploiement.sh
+            /var/www/Site-films/deploiement.sh
