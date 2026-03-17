@@ -1,13 +1,16 @@
-// src/middleware/index.ts
 import PocketBase from 'pocketbase';
 import { defineMiddleware } from 'astro/middleware';
 
 export const onRequest = defineMiddleware(async ({ locals, request, isPrerendered }, next) => {
-    const pbUrl =
+    let pbUrl =
         import.meta.env.PB_URL ||
         (import.meta.env.MODE === 'development'
             ? 'http://localhost:8090'
             : 'https://site-films.ethantouitou.fr:443');
+
+    if (!pbUrl.startsWith('http://') && !pbUrl.startsWith('https://')) {
+        pbUrl = `https://${pbUrl}`;
+    }
 
     locals.pb = new PocketBase(pbUrl);
 
